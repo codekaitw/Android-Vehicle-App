@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">comp1011Assignment3_200465333</string>
+    <string name="title">Dream U Car</string>
+
+    <!-- splash string -->
+    <string name="title_activity_splashscreen">SplashscreenActivity</string>
+    <string name="img_splash_description">splash screen car image</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
