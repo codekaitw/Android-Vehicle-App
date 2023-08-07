@@ -1,13 +1,15 @@
 package com.example.comp1011assignment3_200465333;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
 import com.example.comp1011assignment3_200465333.model.Vehicle;
 
 public class ViewSoldVehicleActivity extends BaseActivity {
@@ -16,7 +18,6 @@ public class ViewSoldVehicleActivity extends BaseActivity {
     TextView textView;
     Button button;
 
-    ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,9 +28,10 @@ public class ViewSoldVehicleActivity extends BaseActivity {
 
         readData();
         getDataString();
+        convertStringToBitmapToBitmapImageList();
 
-        adapter = new ArrayAdapter<>(this, R.layout.list_item, vehicleList);
-        listView.setAdapter(adapter);
+        ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
+        listView.setAdapter(itemAdapter);
 
         button = findViewById(R.id.btn_GoAllVehicleView);
         button.setOnClickListener(new View.OnClickListener() {
@@ -49,14 +51,32 @@ public class ViewSoldVehicleActivity extends BaseActivity {
             if(v.getDateSold().isEmpty()){
                 continue;
             }
-            dataString = "Make : " + v.getMake()
+            dataString = " Make : " + v.getMake()
                     + ", Model : " + v.getModel() + ",\n"
                     + " Condition : " + v.getCondition()
                     + ", Engine : " + v.getEngineCylinders() + ",\n"
                     + " Doors : " + v.getNumberOfDoors()
-                    + ", Price : " + v.getPrice();
+                    + ", year : " + v.getYear() + ",\n"
+                    + " Price : " + v.getPrice()
+                    + ", Date Sold : " + v.getDateSold();
             dataString += "\n";
             vehicleList.add(dataString);
+        }
+    }
+
+    @Override
+    void convertStringToBitmapToBitmapImageList() {
+        for(Vehicle v : vehicles){
+            if(v.getDateSold().isEmpty()){
+                continue;
+            }
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(v.getImagePath());
+                //Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getApplicationContext().getContentResolver(), Uri.parse(v.getImagePath())));
+                bitmapImageList.add(bitmap);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }

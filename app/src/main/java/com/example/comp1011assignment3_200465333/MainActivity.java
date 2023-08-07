@@ -1,25 +1,30 @@
 package com.example.comp1011assignment3_200465333;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+import androidx.core.content.ContextCompat;
+import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
 import com.example.comp1011assignment3_200465333.data.InitialData;
 import com.example.comp1011assignment3_200465333.model.Vehicle;
 
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity {
-
-    public Vehicle v;
     TextView textView;
     ListView listView;
-    ArrayAdapter<String> adapter;
     Button btn_go_add_view;
     Button btn_go_availableVehicle_view;
     Button btn_go_soldVehicle_view;
-    static String fileName = "vehicle.json";
+    Button btn_go_company_detail_view;
+    Spinner spinner;
+    static String FILENAME = "vehicle.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,30 +32,54 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         listView = findViewById(R.id.listView_AllVehicle);
-        textView = findViewById(R.id.textView);
 
-        File file = new File(getFilesDir(), fileName);
+        // spinner
+        spinner = findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        setSpinnerListener(spinner);
+        spinner.setOnItemSelectedListener(this);
+
+
+
+        // check if file exists
+        File file = new File(getFilesDir(), FILENAME);
         if(!file.exists()){
             initData();
             writeData();
         }
         readData();
         getDataString();
+        convertStringToBitmapToBitmapImageList();
+
+        ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
+        listView.setAdapter(itemAdapter);
+
+
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, VehicleDetailActivity.class);
+                intent.putExtra("vehicle_Id", vehicles.get(position).getId());
+                startActivity(intent);
+                return true;
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = parent.getItemAtPosition(position).toString();
-                makeToast(name);
+                makeToast("Long click to view details");
             }
         });
-
-        adapter = new ArrayAdapter<>(this, R.layout.list_item, vehicleList);
-        listView.setAdapter(adapter);
+        //adapter = new ArrayAdapter<>(this, R.layout.listview_item, vehicleList);
+        //listView.setAdapter(adapter);
 
 
         // add button click event
-        btn_go_add_view = findViewById(R.id.btn_GoAllVehicleView);
+        btn_go_add_view = findViewById(R.id.btn_GoAddVehicleView);
         btn_go_add_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,51 +105,44 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        btn_go_company_detail_view = findViewById(R.id.btn_AboutUs);
+        btn_go_company_detail_view.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CompanyDetailActivity.class);
+            startActivity(intent);
+        });
+
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemSelected(parent, view, position, id);
+        listView = findViewById(R.id.listView_AllVehicle);
+        String spinnerItem = spinner.getSelectedItem().toString();
+        if(spinnerItem.equals("Sort")) {
+            ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
+            listView.setAdapter(itemAdapter);
+        }else {
+            ItemAdapter itemAdapter = new ItemAdapter(this, sortedVehicleList, sortedBitmapImageList);
+            listView.setAdapter(itemAdapter);
+        }
+    }
 
     void initData(){
-        InitialData baseDataObj = new InitialData();
-        vehicles = baseDataObj.getVehicles();
+        InitialData initData = new InitialData();
+        vehicles = initData.getVehicles();
+        processInitialDataImageToExternalStorage();
     }
 
-    /*
-    private void readData(){
-        Gson gson = new GsonBuilder().create();
-        String fileName = MainActivity.fileName;
-        String filePath = getFilesDir().getAbsolutePath() + "/" + fileName;
-        try {
-            //FileInputStream fis = openFileInput(fileName);
-            FileInputStream fis = new FileInputStream(filePath);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            String rjson = br.readLine();
-            Type listType = new TypeToken<ArrayList<Vehicle>>(){}.getType();
-            vehicles = gson.fromJson(rjson, listType);
-            fis.close();
-            isr.close();
-            br.close();
-        }catch (Exception e){
-            e.printStackTrace();
+    void processInitialDataImageToExternalStorage(){
+        for(int i = 0; i < vehicles.size(); i++) {
+            String imagePath = vehicles.get(i).getImagePath();
+            Drawable drawable = ContextCompat.getDrawable(this, Integer.parseInt(imagePath));
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            assert bitmapDrawable != null;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            String fileImagePath  = saveImageToExternalStorage(bitmap);
+            vehicles.get(i).setImagePath(fileImagePath);
         }
     }
-
-    private void writeData(){
-        Gson gson = new GsonBuilder().create();
-        String fileName = MainActivity.fileName;
-        String filePath = getFilesDir().getAbsolutePath() + "/" + fileName;
-        try {
-            //FileOutputStream fos = openFileOutput(filePath, MODE_PRIVATE);
-            FileOutputStream fos = new FileOutputStream(filePath);
-            fos.write(gson.toJson(vehicles).getBytes());
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-     */
-
-
-
 }

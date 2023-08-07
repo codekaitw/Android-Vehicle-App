@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission
+            android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+            tools:ignore="ScopedStorage"/>
+
     <application
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,6 +15,18 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.Comp1011Assignment3_200465333"
             tools:targetApi="31">
+        <activity
+                android:name=".ModifyCompanyActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".CompanyDetailActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".ModifyVehicleActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".VehicleDetailActivity"
+                android:exported="false"/>
         <activity
                 android:name=".ViewSoldVehicleActivity"
                 android:exported="false"/>

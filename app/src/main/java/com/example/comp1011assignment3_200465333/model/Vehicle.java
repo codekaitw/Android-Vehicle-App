@@ -7,17 +7,19 @@ public class Vehicle {
     private String engineCylinders;
     private int numberOfDoors;
 
+    private int id;
     private int year;
     private double price;
     private String color;
     private String thumbnailImg;
-    private String fillSizeImg;
+    private String imagePath;
     private String dateSold;
 
     public Vehicle() {
     }
 
-    public Vehicle(String make, String model, String condition, String engineCylinders, int numberOfDoors, int year, double price, String color, String thumbnailImg, String fillSizeImg, String dateSold) {
+    public Vehicle(int id, String make, String model, String condition, String engineCylinders, int numberOfDoors, int year, double price, String color, String imagePath, String dateSold) {
+        this.id = id;
         this.make = make;
         this.model = model;
         this.condition = condition;
@@ -26,13 +28,28 @@ public class Vehicle {
         this.year = year;
         this.price = price;
         this.color = color;
-        this.thumbnailImg = thumbnailImg;
-        this.fillSizeImg = fillSizeImg;
+        this.imagePath = imagePath;
         this.dateSold = dateSold;
     }
 
     public String getMake() {
         return make;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getThumbnailImg() {
+        return thumbnailImg;
+    }
+
+    public void setThumbnailImg(String thumbnailImg) {
+        this.thumbnailImg = thumbnailImg;
     }
 
     public void setMake(String make) {
@@ -87,20 +104,12 @@ public class Vehicle {
         this.color = color;
     }
 
-    public String getThumbnailImg() {
-        return thumbnailImg;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setThumbnailImg(String thumbnailImg) {
-        this.thumbnailImg = thumbnailImg;
-    }
-
-    public String getFillSizeImg() {
-        return fillSizeImg;
-    }
-
-    public void setFillSizeImg(String fillSizeImg) {
-        this.fillSizeImg = fillSizeImg;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getDateSold() {
@@ -131,7 +140,7 @@ public class Vehicle {
                 ", price=" + price +
                 ", color='" + color + '\'' +
                 ", thumbnailImg='" + thumbnailImg + '\'' +
-                ", fillSizeImg='" + fillSizeImg + '\'' +
+                ", fillSizeImg='" + imagePath + '\'' +
                 ", dateSold='" + dateSold + '\'' +
                 '}';
     }

@@ -3,31 +3,56 @@ package com.example.comp1011assignment3_200465333;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.comp1011assignment3_200465333.model.Vehicle;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class AddVehicleActivity extends AppCompatActivity {
+public class AddVehicleActivity extends BaseActivity {
 
     ArrayList<Object> validInput = new ArrayList<>();
-    ArrayList<Vehicle> vehicles = new ArrayList<>();
+    private ImageView imageView;
+
+    Button btn_upload;
+    Button btn_add;
+    Button btn_home;
     Vehicle v;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_vehicle);
 
-        final Button btn_add = findViewById(R.id.btn_addSubmit);
+        btn_add = findViewById(R.id.btn_addSubmit);
+        btn_upload = findViewById(R.id.btn_UploadImage_modifyCompanyView);
+        btn_home = findViewById(R.id.btn_GoHomePage);
+        imageView = findViewById(R.id.imageView_modifyCompanyView);
+        uploadImage(imageView);
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkForStoragePermission();
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                activityResultLauncher.launch(intent);
 
+                // Convert dp to pixels
+                float dpValue = 200f; // Change this value to your desired dp size
+                float density = getResources().getDisplayMetrics().density;
+                int widthPx = (int) (dpValue * density);
+                int heightPx = (int) (dpValue * density);
+
+                // Set the width and height of the ImageView
+                imageView.getLayoutParams().width = widthPx;
+                imageView.getLayoutParams().height = heightPx;
+
+                // Apply the changes to the layout
+                imageView.requestLayout();
+            }
+        });
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -39,11 +64,19 @@ public class AddVehicleActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btn_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddVehicleActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     private boolean checkProcessInput(){
         final TextInputLayout textInputLayoutMake = findViewById(R.id.textInputLayout_make);
-        final TextInputLayout textInputLayoutModel = findViewById(R.id.textInputLayout_model);
-        final TextInputLayout textInputLayoutEngine = findViewById(R.id.textInputLayout_engine);
+        final TextInputLayout textInputLayoutModel = findViewById(R.id.textInputLayout_modify_price);
+        final TextInputLayout textInputLayoutEngine = findViewById(R.id.textInputLayout_modify_soldDate);
         final TextInputLayout textInputLayoutDoor = findViewById(R.id.textInputLayout_door);
         final TextInputLayout textInputLayoutColor = findViewById(R.id.textInputLayout_color);
         final TextInputLayout textInputLayoutYear = findViewById(R.id.textInputLayout_year);
@@ -119,6 +152,13 @@ public class AddVehicleActivity extends AppCompatActivity {
             return false;
         }
         textInputLayoutCondition.setError(null);
+
+        // get bitmap imagePath
+        if(imagePath_bitmap_for_store == null){
+            makeToast("Please select an image and upload");
+            return false;
+        }
+
         validInput.add(make);
         validInput.add(model);
         validInput.add(engine);
@@ -129,46 +169,15 @@ public class AddVehicleActivity extends AppCompatActivity {
         validInput.add(condition);
         validInput.add(dateSold);
 
-        v = new Vehicle(make, model, condition, engine, Integer.parseInt(door), Integer.parseInt(year), Double.parseDouble(price), color, "s", "s", dateSold);
+        String imagePath = saveImageToExternalStorage(imagePath_bitmap_for_store);
+        validInput.add(imagePath);
+
+        v = new Vehicle(BaseActivity.vehicleId++, make, model, condition, engine, Integer.parseInt(door), Integer.parseInt(year), Double.parseDouble(price), color, imagePath, dateSold);
         processData();
         return true;
     }
 
-    private void readData(){
-        Gson gson = new GsonBuilder().create();
-        String fileName = MainActivity.fileName;
-        String filePath = getFilesDir().getAbsolutePath() + "/" + fileName;
-        try {
-            //FileInputStream fis = openFileInput(fileName);
-            FileInputStream fis = new FileInputStream(filePath);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            String rjson = br.readLine();
-            Type listType = new TypeToken<ArrayList<Vehicle>>(){}.getType();
-            vehicles = gson.fromJson(rjson, listType);
-            fis.close();
-            isr.close();
-            br.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
-    private void writeData(){
-        Gson gson = new GsonBuilder().create();
-        String fileName = MainActivity.fileName;
-        String filePath = getFilesDir().getAbsolutePath() + "/" + fileName;
-        try {
-            //FileOutputStream fos = openFileOutput(filePath, MODE_PRIVATE);
-            FileOutputStream fos = new FileOutputStream(filePath);
-            fos.write(gson.toJson(vehicles).getBytes());
-            fos.flush();
-            fos.close();
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
     private void processData(){
         readData();
         vehicles.add(v);
