@@ -5,19 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.*;
 import androidx.core.content.ContextCompat;
 import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
 import com.example.comp1011assignment3_200465333.data.InitialData;
-import com.example.comp1011assignment3_200465333.model.Vehicle;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
 
 
 public class MainActivity extends BaseActivity {
-    TextView textView;
     ListView listView;
     Button btn_go_add_view;
     Button btn_go_availableVehicle_view;
@@ -50,9 +48,11 @@ public class MainActivity extends BaseActivity {
             writeData();
         }
         readData();
-        getDataString();
-        convertStringToBitmapToBitmapImageList();
+        getDataString(vehicles);
+        convertStringToBitmapToBitmapImageList(vehicles);
 
+
+        // actually below two line is useless, because onItemSelected() is auto called when the main activity is created
         ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
         listView.setAdapter(itemAdapter);
 
@@ -62,7 +62,11 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, VehicleDetailActivity.class);
-                intent.putExtra("vehicle_Id", vehicles.get(position).getId());
+                if(isSorted){
+                    intent.putExtra("vehicle_Id", sortedVehicles.get(position).getId());
+                }else{
+                    intent.putExtra("vehicle_Id", vehicles.get(position).getId());
+                }
                 startActivity(intent);
                 return true;
             }
@@ -119,13 +123,13 @@ public class MainActivity extends BaseActivity {
         super.onItemSelected(parent, view, position, id);
         listView = findViewById(R.id.listView_AllVehicle);
         String spinnerItem = spinner.getSelectedItem().toString();
+        ItemAdapter itemAdapter;
         if(spinnerItem.equals("Sort")) {
-            ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
-            listView.setAdapter(itemAdapter);
+            itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
         }else {
-            ItemAdapter itemAdapter = new ItemAdapter(this, sortedVehicleList, sortedBitmapImageList);
-            listView.setAdapter(itemAdapter);
+            itemAdapter = new ItemAdapter(this, sortedVehicleList, sortedBitmapImageList);
         }
+        listView.setAdapter(itemAdapter);
     }
 
     void initData(){
@@ -145,4 +149,5 @@ public class MainActivity extends BaseActivity {
             vehicles.get(i).setImagePath(fileImagePath);
         }
     }
+
 }

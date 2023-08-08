@@ -3,11 +3,9 @@ package com.example.comp1011assignment3_200465333;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
 import com.example.comp1011assignment3_200465333.model.Vehicle;
@@ -48,7 +46,7 @@ public class ModifyVehicleActivity extends BaseActivity {
             }
             this.v = v;
 
-            getDataString();
+            getSingleDataString();
             Bitmap bitmap = BitmapFactory.decodeFile(v.getImagePath());
             singleBitmapImagePath.add(bitmap);
 
@@ -106,8 +104,7 @@ public class ModifyVehicleActivity extends BaseActivity {
         return true;
     }
 
-    @Override
-    void getDataString(){
+    void getSingleDataString(){
         singleDataVehicle.clear();
 
         String dataString  = "";

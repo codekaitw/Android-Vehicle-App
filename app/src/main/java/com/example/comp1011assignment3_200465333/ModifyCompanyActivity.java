@@ -6,9 +6,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import com.example.comp1011assignment3_200465333.model.Company;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class ModifyCompanyActivity extends CompanyDetailActivity {

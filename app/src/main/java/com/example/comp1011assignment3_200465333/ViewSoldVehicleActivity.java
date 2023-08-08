@@ -1,16 +1,10 @@
 package com.example.comp1011assignment3_200465333;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import android.os.Bundle;
 import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
-import com.example.comp1011assignment3_200465333.model.Vehicle;
 
 public class ViewSoldVehicleActivity extends BaseActivity {
 
@@ -26,9 +20,18 @@ public class ViewSoldVehicleActivity extends BaseActivity {
         listView = findViewById(R.id.listView_SoldVehicle);
         textView = findViewById(R.id.soldPageTitle);
 
+        // spinner
+        spinner = findViewById(R.id.spinner_soldView);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        setSpinnerListener(spinner);
+        spinner.setOnItemSelectedListener(this);
+
         readData();
-        getDataString();
-        convertStringToBitmapToBitmapImageList();
+        setSoldVehiclesList();
+        getDataString(soldVehicles);
+        convertStringToBitmapToBitmapImageList(soldVehicles);
 
         ItemAdapter itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
         listView.setAdapter(itemAdapter);
@@ -41,8 +44,44 @@ public class ViewSoldVehicleActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ViewSoldVehicleActivity.this, VehicleDetailActivity.class);
+                if(isSorted){
+                    intent.putExtra("vehicle_Id", sortedVehicles.get(position).getId());
+                }else{
+                    intent.putExtra("vehicle_Id", soldVehicles.get(position).getId());
+                }
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                makeToast("Long click to view details");
+            }
+        });
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemSelected(parent, view, position, id);
+        viewPageCode = 2;
+        listView = findViewById(R.id.listView_SoldVehicle);
+        String spinnerItem = spinner.getSelectedItem().toString();
+        ItemAdapter itemAdapter;
+        if(spinnerItem.equals("Sort")) {
+            itemAdapter = new ItemAdapter(this, vehicleList, bitmapImageList);
+        }else {
+            itemAdapter = new ItemAdapter(this, sortedVehicleList, sortedBitmapImageList);
+        }
+        listView.setAdapter(itemAdapter);
+    }
+    /*
     @Override
     void getDataString(){
         vehicleList.clear();
@@ -79,4 +118,6 @@ public class ViewSoldVehicleActivity extends BaseActivity {
             }
         }
     }
+
+     */
 }

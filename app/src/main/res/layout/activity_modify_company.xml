@@ -7,9 +7,10 @@
         android:layout_height="match_parent"
         tools:context=".ModifyCompanyActivity">
     <TextView
-            android:text="Modify Company"
+            android:text="@string/activity_modify_company_title_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/modify_vehicle_title"
+            android:textSize="30sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="17dp"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -25,7 +26,7 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name"/>
+                android:hint="@string/name"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -39,7 +40,7 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="City"/>
+                android:hint="@string/city"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -53,7 +54,7 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Province"/>
+                android:hint="@string/province"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -68,7 +69,7 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Postal Code"/>
+                android:hint="@string/postalCode"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -81,17 +82,17 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="sreet"/>
+                android:hint="@string/street"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-            android:text="Submit Changed"
+            android:text="@string/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/btn_submitChange_modify_company"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="64dp"
             android:layout_marginStart="20dp"/>
     <Button
-            android:text="Home"
+            android:text="@string/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/btn_GoHomePage_modify_company"
             app:layout_constraintTop_toTopOf="parent"
@@ -119,7 +120,7 @@
                     android:padding="10dp" android:src="@drawable/baseline_image_24"/>
         </LinearLayout>
         <Button
-                android:text="Upload"
+                android:text="@string/upload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/btn_UploadImage_modifyCompanyView"
                 android:layout_gravity="right|center_vertical"

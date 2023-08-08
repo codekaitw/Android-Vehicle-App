@@ -1,5 +1,6 @@
 package com.example.comp1011assignment3_200465333;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -15,8 +19,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.comp1011assignment3_200465333.adapter.ItemAdapter;
 import com.example.comp1011assignment3_200465333.model.Vehicle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,9 +43,17 @@ public class BaseActivity extends AppCompatActivity implements AdapterView.OnIte
     Bitmap imagePath_bitmap_for_store;
     Spinner spinner;
 
+    // this code is for sorting spinner depending on which view is use and display
+    int viewPageCode = 0;
+    boolean isSorted = false;
+
     ArrayList<Vehicle> sortedVehicles = new ArrayList<>();
     ArrayList<Bitmap> sortedBitmapImageList = new ArrayList<>();
     ArrayList<String> sortedVehicleList = new ArrayList<>();
+
+    ArrayList<Vehicle> availableVehicles = new ArrayList<>();
+    ArrayList<Vehicle> soldVehicles = new ArrayList<>();
+
     public static int vehicleId = 0;
 
 
@@ -56,7 +68,7 @@ public class BaseActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // for initialization of vehicle imagePath, in order to convert imagePath(String) to bitmap
-    void convertStringToBitmapToBitmapImageList() {
+    void convertStringToBitmapToBitmapImageList(ArrayList<Vehicle> vehicles) {
         bitmapImageList.clear();
         for(Vehicle v : vehicles){
             try {
@@ -103,19 +115,29 @@ public class BaseActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    void getDataString(){
+    void getDataString(ArrayList<Vehicle> vehicles){
         vehicleList.clear();
         String dataString  = "";
         for(Vehicle v: vehicles){
-
-            dataString = " Make : " + v.getMake()
+            dataString = "";
+            if(!v.getDateSold().isEmpty()){
+                dataString = " SOLD\n";
+            }
+            dataString += " Make : " + v.getMake()
                     + ", Model : " + v.getModel() + ",\n"
                     + " Condition : " + v.getCondition()
                     + ", Engine : " + v.getEngineCylinders() + ",\n"
                     + " Doors : " + v.getNumberOfDoors()
                     + ", year : " + v.getYear() + ",\n"
-                    + " Price : " + v.getPrice()
-                    + ", Date Sold : " + v.getDateSold();
+                    + " Price : " + v.getPrice();
+            /*
+            if(v.getDateSold().isEmpty())
+            {
+                dataString += ", Date Sold : none";
+            }else{
+                dataString += ", Date Sold : " + v.getDateSold();
+            }
+            */
             dataString += "\n";
             vehicleList.add(dataString);
         }
@@ -204,7 +226,17 @@ public class BaseActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selectedItem = parent.getItemAtPosition(position).toString();
         if(!selectedItem.equals("Sort")) {
-            sort(selectedItem);
+            if(viewPageCode == 1){
+                sort(selectedItem, availableVehicles);
+                viewPageCode = 0;
+            }else if(viewPageCode == 2){
+                sort(selectedItem, soldVehicles);
+                viewPageCode = 0;
+            }else {
+                sort(selectedItem, vehicles);
+                viewPageCode = 0;
+            }
+            isSorted = true;
         }
     }
 
@@ -213,67 +245,121 @@ public class BaseActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    void sort(String selectedItem) {
-        sortedVehicles.clear();
-        switch (selectedItem){
-            case "Make":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getMake)).collect(Collectors.toList()));
-                break;
-            case "Model":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getModel)).collect(Collectors.toList()));
-                break;
-            case "Condition":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getCondition)).collect(Collectors.toList()));
-                break;
-            case "Engine":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getEngineCylinders)).collect(Collectors.toList()));
-                break;
-            case "Doors":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getNumberOfDoors)).collect(Collectors.toList()));
-                break;
-            case "Year":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparing(Vehicle::getYear)).collect(Collectors.toList()));
-                break;
-            case "Price":
-                sortedVehicles.addAll(vehicles.stream().sorted(Comparator.comparingDouble(Vehicle::getPrice)).collect(Collectors.toList()));
-                break;
-            default:
-                break;
-        }
-        setSortedVehiclesList();
-        setSortedBitmapImageList();
+    void setAvailableVehiclesList(){
+        availableVehicles.addAll(vehicles.stream().filter(v -> v.getDateSold().isEmpty()).collect(Collectors.toList()));
     }
 
-    void setSortedVehiclesList(){
-        sortedVehicleList.clear();
-        String dataString  = "";
-        for(Vehicle v: sortedVehicles) {
+    void setSoldVehiclesList(){
+        soldVehicles.addAll(vehicles.stream().filter(v -> !v.getDateSold().isEmpty()).collect(Collectors.toList()));
+    }
 
-            dataString = " Make : " + v.getMake()
-                    + ", Model : " + v.getModel() + ",\n"
-                    + " Condition : " + v.getCondition()
-                    + ", Engine : " + v.getEngineCylinders() + ",\n"
-                    + " Doors : " + v.getNumberOfDoors()
-                    + ", year : " + v.getYear() + ",\n"
-                    + " Price : " + v.getPrice()
-                    + ", Date Sold : " + v.getDateSold();
-            dataString += "\n";
-            sortedVehicleList.add(dataString);
+    void sort(String selectedItem, ArrayList<Vehicle> vehiclesForSort) {
+        {
+            sortedVehicles.clear();
+            switch (selectedItem) {
+                case "Make":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getMake)).collect(Collectors.toList()));
+                    break;
+                case "Model":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getModel)).collect(Collectors.toList()));
+                    break;
+                case "Condition":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getCondition)).collect(Collectors.toList()));
+                    break;
+                case "Engine":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getEngineCylinders)).collect(Collectors.toList()));
+                    break;
+                case "Doors":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getNumberOfDoors)).collect(Collectors.toList()));
+                    break;
+                case "Year":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparing(Vehicle::getYear)).collect(Collectors.toList()));
+                    break;
+                case "Price":
+                    sortedVehicles.addAll(vehiclesForSort.stream().sorted(Comparator.comparingDouble(Vehicle::getPrice)).collect(Collectors.toList()));
+                    break;
+                default:
+                    break;
+            }
+            setSortedVehiclesList();
+            setSortedBitmapImageList();
         }
     }
 
-    void setSortedBitmapImageList() {
-        sortedBitmapImageList.clear();
-        for(Vehicle v : sortedVehicles){
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(v.getImagePath());
-                //Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getApplicationContext().getContentResolver(), Uri.parse(v.getImagePath())));
-                sortedBitmapImageList.add(bitmap);
-            }catch (Exception e){
-                e.printStackTrace();
+        void setSortedVehiclesList () {
+            sortedVehicleList.clear();
+            String dataString = "";
+            for (Vehicle v : sortedVehicles) {
+                dataString = "";
+
+                if (!v.getDateSold().isEmpty()) {
+                    dataString = " SOLD\n";
+                }
+                dataString += " Make : " + v.getMake()
+                        + ", Model : " + v.getModel() + ",\n"
+                        + " Condition : " + v.getCondition()
+                        + ", Engine : " + v.getEngineCylinders() + ",\n"
+                        + " Doors : " + v.getNumberOfDoors()
+                        + ", year : " + v.getYear() + ",\n"
+                        + " Price : " + v.getPrice();
+                /*
+                if (v.getDateSold().isEmpty()) {
+                    dataString += ", Date Sold : none";
+                } else {
+                    dataString += ", Date Sold : " + v.getDateSold();
+                }
+                 */
+                dataString += "\n";
+                sortedVehicleList.add(dataString);
             }
         }
+
+        void setSortedBitmapImageList () {
+            sortedBitmapImageList.clear();
+            for (Vehicle v : sortedVehicles) {
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(v.getImagePath());
+                    //Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getApplicationContext().getContentResolver(), Uri.parse(v.getImagePath())));
+                    sortedBitmapImageList.add(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dream_u_car_menu, menu);
+        return true;
     }
 
-
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent = new Intent();
+        switch(item.getItemId()){
+            case R.id.home_menuItem:
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.add_menuItem:
+                intent = new Intent(getApplicationContext(), AddVehicleActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.aboutUs_menuItem:
+                intent = new Intent(getApplicationContext(), CompanyDetailActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.available_menuItem:
+                intent = new Intent(getApplicationContext(), ViewAvailableVehicleActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.sold_menuItem:
+                intent = new Intent(getApplicationContext(), ViewSoldVehicleActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

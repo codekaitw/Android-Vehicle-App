@@ -48,8 +48,8 @@ public class CompanyDetailActivity extends BaseActivity {
         }
         readData();
         readCompanyData();
-        int numberOfSold = (int) vehicles.stream().filter(vehicle -> vehicle.getDateSold() != null).count();
-        double totalProfit = vehicles.stream().filter(vehicle -> vehicle.getDateSold() != null).mapToDouble(Vehicle::getPrice).sum();
+        int numberOfSold = (int) vehicles.stream().filter(vehicle -> !vehicle.getDateSold().isEmpty()).count();
+        double totalProfit = vehicles.stream().filter(vehicle -> !vehicle.getDateSold().isEmpty()).mapToDouble(Vehicle::getPrice).sum();
         if(company.getNumberOfSold() != numberOfSold){
             company.setNumberOfSold(numberOfSold);
             company.setTotalProfit(totalProfit);

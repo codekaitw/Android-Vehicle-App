@@ -1,17 +1,9 @@
 package com.example.comp1011assignment3_200465333.data;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Environment;
-import androidx.core.content.ContextCompat;
 import com.example.comp1011assignment3_200465333.BaseActivity;
 import com.example.comp1011assignment3_200465333.R;
 import com.example.comp1011assignment3_200465333.model.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class InitialData {

@@ -6,6 +6,69 @@
     <string name="title_activity_splashscreen">SplashscreenActivity</string>
     <string name="img_splash_description">splash screen car image</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <!-- Button -->
+    <string name="home">Home</string>
+    <string name="upload">Upload</string>
+    <string name="add">Add</string>
+    <string name="modify">Modify</string>
+    <string name="aboutUs">About Us</string>
+    <string name="available">Available</string>
+    <string name="sold">Sold</string>
+    <string name="submit">Submit Changed</string>
+
+    <!-- spinner -->
+    <string name="SpinnerSort">Sort</string>
+
+    <!-- vehicle property -->
+    <string name="make">Make</string>
+    <string name="model">Model</string>
+    <string name="engine">Engine Cylinders</string>
+    <string name="condition">Condition</string>
+    <string name="year">Year</string>
+    <string name="doors">Number of Doors</string>
+    <string name="price">Price</string>
+    <string name="color">Color</string>
+    <string name="dateSold">DateSold</string>
+
+    <!-- company property -->
+    <string name="name">Name</string>
+    <string name="street">Street</string>
+    <string name="city">City</string>
+    <string name="province">Province</string>
+    <string name="postalCode">Postal Code</string>
+    <string name="address">Address</string>
+
+    <!-- menu -->
+    <string name="home_menuItem_string">Home Page</string>
+    <string name="add_menuItem_string">Add Vehicle Page</string>
+    <string name="aboutUs_menuItem_string">About Us Page</string>
+    <string name="available_menuItem_string">Available Vehicle</string>
+    <string name="sold_menuItem_string">Sold Vehicle</string>
+
+
+    <!-- activity_add_vehicle.xml -->
+    <string name="activity_add_vehicle_title_string">Add Vehicle</string>
+
+    <!-- activity_company_detail.xml -->
+    <string name="activity_company_detail_title_string">Company Detail</string>
+
+    <!-- activity_main.xml -->
+    <string name="activity_main_title_string">Dream U Car</string>
+
+    <!-- activity_modify_company.xml -->
+    <string name="activity_modify_company_title_string">Modify Company</string>
+
+    <!-- activity_modify_vehicle.xml -->
+    <string name="activity_modify_vehicle_title_string">Modify Vehicle</string>
+
+    <!-- activity_vehicle_detail.xml -->
+    <string name="activity_vehicle_detail_title_string">Vehicle Detail</string>
+
+    <!-- activity_view_available.xml -->
+    <string name="activity_view_available_title_string">Available Vehicle</string>
+
+    <!-- activity_view_sold.xml -->
+    <string name="activity_view_sold_title_string">Available Vehicle</string>
+
 </resources>
